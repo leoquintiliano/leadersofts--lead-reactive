@@ -1,0 +1,27 @@
+server:
+  port: ${PORT:5000}
+
+spring:
+  application:
+    name: Okta Lead Capure Reactive
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/${database_name}
+    username: ${okta_user_name}
+    password: ${okta_user_password}
+    pool:
+      enabled: false
+      max-size: 20
+      validation-query: SELECT 1
+      initial-size: 5
+      max-idle-time: 30m
+  jpa:
+    show-sql: true
+
+jpa:
+  default:
+    packages-to-scan:
+      - 'br.com.apirest.leadersofts.leadcapture'
+      - 'br.com.apirest.leadersofts.leadcapture.infrastructure.domain'
