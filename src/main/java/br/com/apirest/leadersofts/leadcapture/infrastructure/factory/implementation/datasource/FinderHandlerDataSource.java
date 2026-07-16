@@ -1,22 +1,29 @@
 package br.com.apirest.leadersofts.leadcapture.infrastructure.factory.implementation.datasource;
 
 import br.com.apirest.leadersofts.leadcapture.infrastructure.converter.LeadConverter;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.converter.LeadDToMapper;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.dto.LeadDTO;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.dto.LeadRecord;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.exception.LeadExceptions;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.exception.NotFoundException;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.factory.find.IFinderHandler;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.filters.LeadFilter;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.mapper.LeadMapper;
-import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.LeadRepository;
-import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.LeadRepositoryCustomQuery;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.RedisRepository;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa.LeadRepository;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa.LeadRepositoryCustomQuery;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @Component
@@ -30,9 +37,18 @@ public class FinderHandlerDataSource implements IFinderHandler {
 
     private static final Logger LOGGER = Logger.getLogger(FinderHandlerDataSource.class.getName());
 
-    public FinderHandlerDataSource(LeadRepository repository, LeadRepositoryCustomQuery leadRepositoryCustomQuery) {
+    private static RedisRepository redisRepository;
+
+    @Value("${cache.key.lead}")
+    private String redisKey;
+
+    @Value("${cache.key.filtered}")
+    private String redisFilterKey;
+
+    public FinderHandlerDataSource(LeadRepository repository, LeadRepositoryCustomQuery leadRepositoryCustomQuery, RedisRepository redisRepository) {
         this.repository = repository;
         this.leadRepositoryCustomQuery = leadRepositoryCustomQuery;
+        this.redisRepository = redisRepository;
     }
 
     @Override
@@ -62,6 +78,7 @@ public class FinderHandlerDataSource implements IFinderHandler {
     }
 
     @Override
+    @Cacheable("leads")
     public Flux<LeadRecord> findAll() {
         return this.repository.findAll()
                 .map(LeadMapper.INSTANCE::leadToLeadRecordDTO)
@@ -78,8 +95,33 @@ public class FinderHandlerDataSource implements IFinderHandler {
     @Override
     public Flux<LeadRecord> findLeadsWithFilter(LeadFilter filter) {
         LOGGER.info("BUSCANDO POR LEADS... :: " + filter);
-        return this.leadRepositoryCustomQuery.findWithFilter(filter)
+        return this.getLeadsWithFilter(filter)
                 .map(LeadMapper.INSTANCE::leadToLeadRecordDTO);
+    }
+
+    private Flux<Lead> getLeadsWithFilter(LeadFilter filter) {
+        Flux<Lead> leads = Flux.empty();
+        var caching = redisRepository.obterCache("leads",redisKey);
+        if(Objects.isNull(caching)) {
+            LOGGER.info("Lead has not been found in cache. Fetching from database");
+            leads = this.leadRepositoryCustomQuery.findWithFilter(filter);
+            addingCache(leads);
+        }
+        else {
+            var cachedLead = LeadConverter.getLead((LeadRecord) caching);
+//            Consumer<FluxSink<Lead>> fluxSinkConsumer = l -> l.next(cachedLead);
+//            leads = Flux.push(fluxSink -> fluxSinkConsumer.accept((FluxSink<Lead>) fluxSinkConsumer));
+            leads = Flux.just(cachedLead);
+        }
+        return leads;
+    }
+
+    private void addingCache(Flux<Lead> leads) {
+        LeadDToMapper functional =  (l) -> LeadMapper.INSTANCE.leadToLeadDTO(l);
+        var leadDto = new AtomicReference<LeadDTO>();
+        leads.subscribe(lead -> leadDto.set(LeadMapper.INSTANCE.leadToLeadDTO(lead)) );
+        redisRepository.adicionarCache("leads",redisKey,leadDto.get(),10L);
+        LOGGER.info("Adding lead to Cache::" + leads);
     }
 
     private Mono<LeadRecord> findById(String term) {
@@ -118,7 +160,7 @@ public class FinderHandlerDataSource implements IFinderHandler {
     }
 
     public static synchronized FinderHandlerDataSource getInstance() {
-        return Objects.isNull(handler) ? new FinderHandlerDataSource(FinderHandlerDataSource.repository, FinderHandlerDataSource.leadRepositoryCustomQuery) : handler;
+        return Objects.isNull(handler) ? new FinderHandlerDataSource(FinderHandlerDataSource.repository, FinderHandlerDataSource.leadRepositoryCustomQuery, FinderHandlerDataSource.redisRepository) : handler;
     }
 
 }

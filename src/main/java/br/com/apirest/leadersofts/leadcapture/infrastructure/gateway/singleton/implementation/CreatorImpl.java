@@ -5,7 +5,7 @@ import br.com.apirest.leadersofts.leadcapture.infrastructure.converter.LeadConve
 import br.com.apirest.leadersofts.leadcapture.infrastructure.dto.LeadRecord;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.factory.implementation.LeadUtilsCreateFactoryImpl;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.gateway.singleton.ICreator;
-import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.LeadRepository;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa.LeadRepository;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

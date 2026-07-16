@@ -1,6 +1,7 @@
 package br.com.apirest.leadersofts.leadcapture.infrastructure.mapper;
 
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.dto.LeadDTO;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.dto.LeadRecord;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -29,6 +30,13 @@ public interface LeadMapper {
     @Mapping(source = "primeiroContato", target = "primeiroContato", qualifiedByName = "prepareData")
     @Mapping(source = "ultimoContato", target = "ultimoContato", qualifiedByName = "prepareData")
     Lead leadRecordToEntity(LeadRecord leadRecord);
+
+    @Mapping(source = "dataVenda", target = "dataVenda", qualifiedByName = "prepareData")
+    @Mapping(source = "dataNascimento", target = "dataNascimento", qualifiedByName = "prepareData")
+    @Mapping(source = "dataCadastro", target = "dataCadastro", qualifiedByName = "prepareData")
+    @Mapping(source = "primeiroContato", target = "primeiroContato", qualifiedByName = "prepareData")
+    @Mapping(source = "ultimoContato", target = "ultimoContato", qualifiedByName = "prepareData")
+    LeadDTO leadToLeadDTO(Lead lead);
 
     @Named("prepareData")
     default String prepareData(String value) {

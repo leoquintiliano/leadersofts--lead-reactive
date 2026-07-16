@@ -1,0 +1,5 @@
+{
+  "address":"teste@localstack.com",
+  "subject":"Novo e-mail",
+  "message":"Nova mensagem de correio eletrônico"
+}

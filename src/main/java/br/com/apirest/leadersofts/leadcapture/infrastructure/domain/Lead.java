@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Table;
 
 @Data
@@ -13,9 +14,10 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "lead")
 @Entity(name = "lead")
 @Builder
-public class Lead {
+public class Lead implements Persistable<Long> {
 
     @Id
+    @org.springframework.data.annotation.Id
     @SequenceGenerator(name = "seq_lead", sequenceName = "seq_lead", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_lead")
     private Long id;
@@ -72,6 +74,15 @@ public class Lead {
 
     private Long diasVenda;
 
+    @Transient
+    @Builder.Default
+    @org.springframework.data.annotation.Transient
+    private boolean isNewEntry = true;
+
+    @Override
+    public boolean isNew() {
+        return isNewEntry;
+    }
 }
 
 
