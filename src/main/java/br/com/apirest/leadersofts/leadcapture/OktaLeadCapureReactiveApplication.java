@@ -11,6 +11,7 @@ import org.hibernate.reactive.mutiny.Mutiny;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
@@ -25,6 +26,7 @@ import java.util.Map;
 @SpringBootApplication(scanBasePackages = "br.com.apirest.leadersofts.leadcapture")
 @EntityScan({"br.com.apirest.leadersofts.leadcapture.infrastructure.domain", "org.hibernate.reactive.example"})
 //@EnableScheduling
+@EnableCaching
 public class OktaLeadCapureReactiveApplication {
 
 	@Bean
