@@ -1,25 +1,14 @@
-package br.com.apirest.leadersofts.leadcapture.infrastructure.domain;
+package br.com.apirest.leadersofts.leadcapture.infrastructure.entities;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Persistable;
-import org.springframework.data.relational.core.mapping.Table;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "lead")
-@Entity(name = "lead")
-@Builder
-public class Lead implements Persistable<Long> {
+@Data
+public class LeadCache {
 
-    @Id
-    @org.springframework.data.annotation.Id
-    @SequenceGenerator(name = "seq_lead", sequenceName = "seq_lead", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_lead")
     private Long id;
 
     private String nome;
@@ -60,7 +49,7 @@ public class Lead implements Persistable<Long> {
 
     private String status;
 
-    private String opcaoVeiculo; // TODOS, 0KM, SEMI-NOVO
+    private String opcaoVeiculo;
 
     private String observacoes;
 
@@ -74,15 +63,4 @@ public class Lead implements Persistable<Long> {
 
     private Long diasVenda;
 
-    @Transient
-    @Builder.Default
-    @org.springframework.data.annotation.Transient
-    private boolean isNewEntry = true;
-
-    @Override
-    public boolean isNew() {
-        return isNewEntry;
-    }
 }
-
-

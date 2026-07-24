@@ -1,4 +1,4 @@
-package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.impl;
+package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa.impl;
 
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead_;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static io.micrometer.common.util.StringUtils.isNotBlank;
 import static java.util.Objects.nonNull;
 
 @Component

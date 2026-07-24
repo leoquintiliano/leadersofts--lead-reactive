@@ -1,6 +1,7 @@
 package br.com.apirest.leadersofts.leadcapture.infrastructure.controller;
 
 import br.com.apirest.leadersofts.leadcapture.core.CreateLeadUseCase;
+import br.com.apirest.leadersofts.leadcapture.core.DeleteLeadUseCase;
 import br.com.apirest.leadersofts.leadcapture.core.FindLeadUseCase;
 import br.com.apirest.leadersofts.leadcapture.core.UpdateLeadUseCase;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.dto.LeadRecord;
@@ -27,13 +28,16 @@ public class LeadController {
 
     private final UpdateLeadUseCase updateLeadUseCase;
 
+    private final DeleteLeadUseCase deleteUseCase;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(LeadController.class.getName());
 
 
-    public LeadController(CreateLeadUseCase leadService, FindLeadUseCase findLeadUseCase, UpdateLeadUseCase updateLeadUseCase) {
+    public LeadController(CreateLeadUseCase leadService, FindLeadUseCase findLeadUseCase, UpdateLeadUseCase updateLeadUseCase, DeleteLeadUseCase deleteUseCase) {
         this.leadService = leadService;
         this.findLeadUseCase = findLeadUseCase;
         this.updateLeadUseCase = updateLeadUseCase;
+        this.deleteUseCase = deleteUseCase;
     }
 
     @PostMapping("save")
@@ -82,6 +86,22 @@ public class LeadController {
         var customerResponse = Mono.just(findLeadUseCase.findAll())
                 .map(ResponseEntity::ok);
         return customerResponse;
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public Mono<Void> delete(@PathVariable("id") Long id) {
+        this.deleteUseCase.delete(id);
+        return  Mono.empty();
+    }
+
+    @GetMapping("teste")
+    public Mono<String> teste() {
+        return Mono.just("");
+    }
+
+    @GetMapping("find/basic")
+    public ResponseEntity<?> findAllBasic() {
+        return ResponseEntity.ok("");
     }
 
 }

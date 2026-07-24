@@ -1,9 +1,9 @@
-package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.impl;
+package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa.impl;
 
 import br.com.apirest.leadersofts.leadcapture.infrastructure.config.hibernate.SessionResolver;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.filters.LeadFilter;
-import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.LeadRepositoryCustomQuery;
+import br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa.LeadRepositoryCustomQuery;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,12 +26,12 @@ public class LeadRepositoryCustomQueryImpl implements LeadRepositoryCustomQuery 
         return this.findLeadWithFilter(filter);
     }
 
-    private StringBuilder getCustomQuery() {
+    public StringBuilder getCustomQuery() {
         return new StringBuilder("SELECT L.id, L.nome, L.carro_atual1, L.carro_atual2, L.carro_atual3, L.carro_interesse1,L.carro_interesse2,L.carro_interesse3," +
                 "L.celular,L.celular2, L.telefone, L.uf, L.cidade,L.endereco, L.email, L.opcao_veiculo, L.status, L.ultimo_contato, L.vendedor, L.data_nascimento, L.observacoes, " +
                 "L.data_cadastro,L.dias_cadastro, L.data_venda, L.dias_venda, L.primeiro_contato, L.dias_ultimo_contato FROM Lead L ");
     }
-
+    // TODO-LEANDRO functional interface -> declarative programming
     private String appendQuery(StringBuilder query, LeadFilter filter) {
         var clause = this.validateNonNullAndGetClause(filter.nome(), filter.celular(),filter.celular2(),filter.telefone(), filter.uf(), filter.cidade(), filter.endereco(),
                 filter.carroAtual1(), filter.carroAtual2(), filter.carroAtual3(), filter.carroInteresse1(), filter.carroInteresse2(), filter.carroInteresse3(),
@@ -132,7 +132,7 @@ public class LeadRepositoryCustomQueryImpl implements LeadRepositoryCustomQuery 
         return Flux.fromIterable(leads);
     }
 
-    private static Lead getLead(Object[] response) {
+    public static Lead getLead(Object[] response) {
         return  Lead.builder()
                 .id(Objects.nonNull(response[0]) ? Long.valueOf(response[0].toString()) : 1L)
                 .nome(Objects.nonNull(response[1].toString()) ? response[1].toString() : "")

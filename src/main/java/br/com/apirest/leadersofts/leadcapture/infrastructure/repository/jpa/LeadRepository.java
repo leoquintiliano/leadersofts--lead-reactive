@@ -1,4 +1,4 @@
-package br.com.apirest.leadersofts.leadcapture.infrastructure.repository;
+package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa;
 
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead;
 import org.springframework.data.r2dbc.repository.Query;
@@ -26,7 +26,6 @@ public interface LeadRepository extends ReactiveCrudRepository<Lead, Long> {
 
     Mono<Lead> findByTelefone(String telefone);
 
-//    @Query("SELECT MAX(l.ID) AS topID FROM Lead l")
     @Query( value = "SELECT MAX(l.id) AS topID FROM Lead l" )
     Flux<Lead> findTopLeadId();
 

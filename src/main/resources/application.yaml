@@ -2,6 +2,10 @@ server:
   port: ${PORT:5000}
 
 spring:
+  config:
+    import:
+      - ./bootstrap.yml
+
   application:
     name: Okta Lead Capure Reactive
   jackson:
@@ -19,9 +23,26 @@ spring:
       max-idle-time: 30m
   jpa:
     show-sql: true
+#  sql:
+#    init:
+#      data-locations: classpath:script.sql
 
 jpa:
   default:
     packages-to-scan:
       - 'br.com.apirest.leadersofts.leadcapture'
       - 'br.com.apirest.leadersofts.leadcapture.infrastructure.domain'
+
+cloud:
+  aws:
+    s3:
+      endpoint: http://s3.localhost.localstack.cloud:4566/
+    sqs:
+      endpoint: http://localhost:4566
+    sns:
+      endpoint: http://localhost:4566
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
