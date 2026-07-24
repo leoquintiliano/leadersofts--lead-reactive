@@ -1,4 +1,4 @@
-package br.com.apirest.leadersofts.leadcapture.infrastructure.repository;
+package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa;
 
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.filters.LeadFilter;

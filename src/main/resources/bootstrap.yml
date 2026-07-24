@@ -1,0 +1,47 @@
+aws:
+  accessKeyId: ${aws_access_key}
+  secretKeyId: ${aws_secret_key}
+  region: us-east-1
+  sns:
+    topic:
+      okta:
+        arn: arn:aws:sns:us-east-1:941630716480:okta-upload
+  sqs:
+    endpoint: arn:aws:sqs:us-east-1:941630716480:okta-utils
+  ses:
+    accessKeyId: ${aws_ses_access_key}
+    secretKeyId: ${aws_ses_secret_key}
+ses:
+  source:
+    mail: leandroquintilianolavras@hotmail.com
+
+sqs:
+  queue:
+    okta: "okta-utils"
+    arn: "arn:aws:sqs:us-east-1:000000000000:okta-utils"
+
+cloud:
+  aws:
+    credentials:
+      useDefault:
+        useDefaultAwsCredentialsChain: true
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  #    port: 44444444
+
+cache:
+  primaryHostName: ${CACHE_HOSTNAME:localhost}
+  ttlDefault: ${TTL_DEFAULT:3600000}
+  commandTimeout: ${REDIS_COMMAND_TIMEOUT:1}
+  readHostName: localhost
+  port: ${CACHE_PORT:6379}
+  key:
+    lead: ${REDIS_CHAVE_LEAD:lead}
+    filtered: ${REDIS_CHAVE_FILTERED:filtered}

@@ -1,4 +1,4 @@
-package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.impl;
+package br.com.apirest.leadersofts.leadcapture.infrastructure.repository.jpa.impl;
 
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead;
 import br.com.apirest.leadersofts.leadcapture.infrastructure.domain.Lead_;
@@ -14,7 +14,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import static io.micrometer.common.util.StringUtils.isNotBlank;
 import static java.util.Objects.nonNull;
